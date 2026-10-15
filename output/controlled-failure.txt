@@ -1,0 +1,226 @@
+
+PLAY [Deploy WordPress website to Debian and Red Hat systems] ******************
+
+TASK [Gathering Facts] *********************************************************
+ok: [wordpress_redhat]
+
+TASK [Display detected operating system] ***************************************
+ok: [wordpress_redhat] => {
+    "msg": "wordpress_redhat is AlmaLinux 10.2 (RedHat family)"
+}
+
+TASK [Verify supported operating system family] ********************************
+ok: [wordpress_redhat] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [stack_install : Set Red Hat platform values] *****************************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Set Red Hat package variables] ***************************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Set Debian platform values] ******************************
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Install EPEL repository on Red Hat systems] **************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Refresh APT cache on Debian systems] *********************
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Install common LEMP and WordPress dependencies] **********
+ok: [wordpress_redhat]
+
+TASK [stack_install : Install PHP packages] ************************************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Install Red Hat firewall and SELinux management packages] ***
+ok: [wordpress_redhat]
+
+TASK [stack_install : Detect installed PHP major and minor version on Debian] ***
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Set Debian PHP-FPM service and paths] ********************
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Set Red Hat PHP-FPM service and paths] *******************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure MariaDB is enabled and running] *******************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure NGINX is enabled and running] *********************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure PHP-FPM is enabled and running] *******************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure firewalld is enabled and running on Red Hat] ******
+ok: [wordpress_redhat]
+
+TASK [stack_install : Check whether WP-CLI is already installed] ***************
+ok: [wordpress_redhat]
+
+TASK [stack_install : Download WP-CLI] *****************************************
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Install WP-CLI] ******************************************
+skipping: [wordpress_redhat]
+
+TASK [stack_config : Create WordPress application user] ************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Create WordPress document root] ***************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM user] ***********************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM group] **********************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM socket owner] ***************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM socket group] ***************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM socket permissions] *********************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Increase PHP CLI memory limit] ****************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Increase PHP-FPM memory limit when configuration file differs] ***
+skipping: [wordpress_redhat]
+
+TASK [stack_config : Create TLS certificate directory] *************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Create TLS private key directory] *************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Generate self-signed TLS certificate] *********************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Set TLS private key permissions] **************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Deploy NGINX WordPress configuration] *********************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Remove Red Hat default NGINX server configuration if present] ***
+ok: [wordpress_redhat]
+
+TASK [stack_config : Remove Debian default NGINX site if present] **************
+skipping: [wordpress_redhat]
+
+TASK [stack_config : Allow HTTP through firewalld on Red Hat] ******************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Allow HTTPS through firewalld on Red Hat] *****************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Allow NGINX network connections through SELinux on Red Hat] ***
+ok: [wordpress_redhat]
+
+TASK [stack_config : Set SELinux context on WordPress directory on Red Hat] ****
+ok: [wordpress_redhat]
+
+TASK [stack_config : Apply SELinux context to WordPress directory on Red Hat] ***
+ok: [wordpress_redhat]
+
+TASK [stack_config : Test NGINX configuration] *********************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Ensure MariaDB is running] ********************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Ensure PHP-FPM is running] ********************************
+ok: [wordpress_redhat]
+
+TASK [stack_config : Ensure NGINX is running] **********************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Create WordPress database] ***********************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Create WordPress database user] ******************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Check whether WordPress core files exist] ********************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Download WordPress core] *************************************
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Set WordPress directory ownership] ***************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Check whether wp-config.php exists] **************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Create wp-config.php] ****************************************
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Check whether WordPress is already installed] ****************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Install WordPress] *******************************************
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Check installed WordPress plugins] ***************************
+ok: [wordpress_redhat] => (item=akismet)
+ok: [wordpress_redhat] => (item=wordpress-seo)
+
+TASK [wordpress : Install missing WordPress plugins] ***************************
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'akismet', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-installed', 'akismet', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:46:50.389643', 'end': '2026-10-15 14:46:52.450462', 'delta': '0:00:02.060819', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'wordpress-seo', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-installed', 'wordpress-seo', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:46:53.349082', 'end': '2026-10-15 14:46:55.366702', 'delta': '0:00:02.017620', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Check whether requested plugins are active] ******************
+ok: [wordpress_redhat] => (item=akismet)
+ok: [wordpress_redhat] => (item=wordpress-seo)
+
+TASK [wordpress : Activate inactive WordPress plugins] *************************
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'akismet', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-active', 'akismet', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:46:56.328597', 'end': '2026-10-15 14:46:58.345569', 'delta': '0:00:02.016972', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'wordpress-seo', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-active', 'wordpress-seo', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:46:59.210811', 'end': '2026-10-15 14:47:01.241677', 'delta': '0:00:02.030866', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Set final WordPress ownership] *******************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Reapply SELinux context after WordPress deployment on Red Hat] ***
+ok: [wordpress_redhat]
+
+TASK [wordpress : Get current WordPress site title] ****************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Update WordPress site title when needed] *********************
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Verify WordPress site title] *********************************
+ok: [wordpress_redhat]
+
+TASK [wordpress : Show expected and actual WordPress titles] *******************
+ok: [wordpress_redhat] => {
+    "msg": [
+        "Expected: [Tina's WordPress Lab]",
+        "Actual:   [Tina's WordPress Lab]"
+    ]
+}
+
+TASK [wordpress : Confirm expected WordPress site title] ***********************
+ok: [wordpress_redhat] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [wordpress : Verify WordPress HTTPS page responds locally] ****************
+ok: [wordpress_redhat]
+
+PLAY RECAP *********************************************************************
+wordpress_redhat           : ok=53   changed=0    unreachable=0    failed=0    skipped=14   rescued=0    ignored=0   
+

@@ -1,0 +1,25 @@
+---
+- name: Deploy WordPress website to Debian and Red Hat systems
+  hosts: wordpress_servers
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Display detected operating system
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }} is {{ ansible_distribution }}
+          {{ ansible_distribution_version }} ({{ ansible_os_family }} family)
+
+    - name: Verify supported operating system family
+      ansible.builtin.assert:
+        that:
+          - ansible_os_family in ['Debian', 'RedHat']
+        fail_msg: >-
+          Unsupported OS family {{ ansible_os_family }}. This lab currently
+          supports Debian-based and Red Hat-based Linux systems.
+
+  roles:
+    - stack_install
+    - stack_config
+    - wordpress

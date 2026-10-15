@@ -1,0 +1,6 @@
+[wordpress_servers]
+wordpress_debian ansible_host=10.2.37.8 ansible_user=tking
+wordpress_redhat ansible_host=10.2.37.97 ansible_user=tking
+
+[wordpress_servers:vars]
+ansible_become=true

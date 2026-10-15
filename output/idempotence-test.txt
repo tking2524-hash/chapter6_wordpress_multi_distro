@@ -1,0 +1,309 @@
+
+PLAY [Deploy WordPress website to Debian and Red Hat systems] ******************
+
+TASK [Gathering Facts] *********************************************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [Display detected operating system] ***************************************
+ok: [wordpress_debian] => {
+    "msg": "wordpress_debian is Ubuntu 26.04 (Debian family)"
+}
+ok: [wordpress_redhat] => {
+    "msg": "wordpress_redhat is AlmaLinux 10.2 (RedHat family)"
+}
+
+TASK [Verify supported operating system family] ********************************
+ok: [wordpress_debian] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+ok: [wordpress_redhat] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [stack_install : Set Red Hat platform values] *****************************
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Set Debian platform values] ******************************
+ok: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Install EPEL repository on Red Hat systems] **************
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Refresh APT cache on Debian systems] *********************
+skipping: [wordpress_redhat]
+ok: [wordpress_debian]
+
+TASK [stack_install : Install common LEMP and WordPress dependencies] **********
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Install PHP packages] ************************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Install Red Hat firewall and SELinux management packages] ***
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Detect installed PHP major and minor version on Debian] ***
+skipping: [wordpress_redhat]
+ok: [wordpress_debian]
+
+TASK [stack_install : Set Debian PHP-FPM service and paths] ********************
+ok: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Set Red Hat PHP-FPM service and paths] *******************
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure MariaDB is enabled and running] *******************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure NGINX is enabled and running] *********************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure PHP-FPM is enabled and running] *******************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Ensure firewalld is enabled and running on Red Hat] ******
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Check whether WP-CLI is already installed] ***************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_install : Download WP-CLI] *****************************************
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [stack_install : Install WP-CLI] ******************************************
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [stack_config : Create WordPress application user] ************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Create WordPress document root] ***************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM user] ***********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM group] **********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM socket owner] ***************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM socket group] ***************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Configure PHP-FPM socket permissions] *********************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Increase PHP CLI memory limit] ****************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Increase PHP-FPM memory limit when configuration file differs] ***
+skipping: [wordpress_redhat]
+ok: [wordpress_debian]
+
+TASK [stack_config : Create TLS certificate directory] *************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Create TLS private key directory] *************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Generate self-signed TLS certificate] *********************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Set TLS private key permissions] **************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Deploy NGINX WordPress configuration] *********************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Remove Red Hat default NGINX server configuration if present] ***
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Remove Debian default NGINX site if present] **************
+skipping: [wordpress_redhat]
+ok: [wordpress_debian]
+
+TASK [stack_config : Allow HTTP through firewalld on Red Hat] ******************
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Allow HTTPS through firewalld on Red Hat] *****************
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Allow NGINX network connections through SELinux on Red Hat] ***
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Set SELinux context on WordPress directory on Red Hat] ****
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Apply SELinux context to WordPress directory on Red Hat] ***
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Test NGINX configuration] *********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Ensure MariaDB is running] ********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Ensure PHP-FPM is running] ********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [stack_config : Ensure NGINX is running] **********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Create WordPress database] ***********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Create WordPress database user] ******************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Check whether WordPress core files exist] ********************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Download WordPress core] *************************************
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Set WordPress directory ownership] ***************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Check whether wp-config.php exists] **************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Create wp-config.php] ****************************************
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Check whether WordPress is already installed] ****************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Install WordPress] *******************************************
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Check installed WordPress plugins] ***************************
+ok: [wordpress_debian] => (item=akismet)
+ok: [wordpress_debian] => (item=wordpress-seo)
+ok: [wordpress_redhat] => (item=akismet)
+ok: [wordpress_redhat] => (item=wordpress-seo)
+
+TASK [wordpress : Install missing WordPress plugins] ***************************
+skipping: [wordpress_debian] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'akismet', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-installed', 'akismet', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 18:32:45.774208', 'end': '2026-10-15 18:32:46.452309', 'delta': '0:00:00.678101', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_debian] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'wordpress-seo', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-installed', 'wordpress-seo', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 18:32:47.155459', 'end': '2026-10-15 18:32:47.824685', 'delta': '0:00:00.669226', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'akismet', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-installed', 'akismet', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:32:45.972788', 'end': '2026-10-15 14:32:47.994456', 'delta': '0:00:02.021668', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'wordpress-seo', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-installed', 'wordpress-seo', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:32:48.867116', 'end': '2026-10-15 14:32:50.902802', 'delta': '0:00:02.035686', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Check whether requested plugins are active] ******************
+ok: [wordpress_debian] => (item=akismet)
+ok: [wordpress_debian] => (item=wordpress-seo)
+ok: [wordpress_redhat] => (item=akismet)
+ok: [wordpress_redhat] => (item=wordpress-seo)
+
+TASK [wordpress : Activate inactive WordPress plugins] *************************
+skipping: [wordpress_debian] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'akismet', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-active', 'akismet', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 18:32:51.828717', 'end': '2026-10-15 18:32:52.527758', 'delta': '0:00:00.699041', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_debian] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'wordpress-seo', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-active', 'wordpress-seo', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 18:32:53.220080', 'end': '2026-10-15 18:32:53.892425', 'delta': '0:00:00.672345', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'akismet', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-active', 'akismet', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:32:51.995507', 'end': '2026-10-15 14:32:54.014674', 'delta': '0:00:02.019167', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat] => (item={'changed': False, 'failed': False, 'msg': '', 'rc': 0, 'changed_when_result': False, 'failed_when_result': False, 'ansible_loop_var': 'item', 'item': 'wordpress-seo', 'stdout': '', 'stderr': '', 'cmd': ['/usr/local/bin/wp', 'plugin', 'is-active', 'wordpress-seo', '--path=/var/www/wordpress', '--allow-root'], 'start': '2026-10-15 14:32:54.883830', 'end': '2026-10-15 14:32:56.915967', 'delta': '0:00:02.032137', 'stdout_lines': [], 'stderr_lines': []}) 
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Set final WordPress ownership] *******************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Reapply SELinux context after WordPress deployment on Red Hat] ***
+skipping: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Get current WordPress site title] ****************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Update WordPress site title when needed] *********************
+skipping: [wordpress_debian]
+skipping: [wordpress_redhat]
+
+TASK [wordpress : Verify WordPress site title] *********************************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+TASK [wordpress : Show expected and actual WordPress titles] *******************
+ok: [wordpress_debian] => {
+    "msg": [
+        "Expected: [Tina's WordPress Lab]",
+        "Actual:   [Tina's WordPress Lab]"
+    ]
+}
+ok: [wordpress_redhat] => {
+    "msg": [
+        "Expected: [Tina's WordPress Lab]",
+        "Actual:   [Tina's WordPress Lab]"
+    ]
+}
+
+TASK [wordpress : Confirm expected WordPress site title] ***********************
+ok: [wordpress_debian] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+ok: [wordpress_redhat] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [wordpress : Verify WordPress HTTPS page responds locally] ****************
+ok: [wordpress_debian]
+ok: [wordpress_redhat]
+
+PLAY RECAP *********************************************************************
+wordpress_debian           : ok=46   changed=0    unreachable=0    failed=0    skipped=20   rescued=0    ignored=0   
+wordpress_redhat           : ok=52   changed=0    unreachable=0    failed=0    skipped=14   rescued=0    ignored=0   
+

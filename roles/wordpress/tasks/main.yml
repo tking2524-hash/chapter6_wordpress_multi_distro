@@ -1,0 +1,189 @@
+---
+- name: Create WordPress database
+  ansible.mysql.mysql_db:
+    name: "{{ wp_db_name }}"
+    state: present
+    login_unix_socket: "{{ mysql_socket }}"
+
+- name: Create WordPress database user
+  ansible.mysql.mysql_user:
+    name: "{{ wp_db_user }}"
+    password: "{{ wp_db_password }}"
+    host: localhost
+    priv: "{{ wp_db_name }}.*:ALL"
+    state: present
+    login_unix_socket: "{{ mysql_socket }}"
+  no_log: true
+
+- name: Check whether WordPress core files exist
+  ansible.builtin.stat:
+    path: "{{ wp_root }}/wp-load.php"
+  register: wordpress_core
+
+- name: Download WordPress core
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} core download
+      --path={{ wp_root }}
+      --allow-root
+  when: not wordpress_core.stat.exists
+
+- name: Set WordPress directory ownership
+  ansible.builtin.file:
+    path: "{{ wp_root }}"
+    owner: "{{ wp_system_user }}"
+    group: "{{ wp_web_group }}"
+    recurse: true
+
+- name: Check whether wp-config.php exists
+  ansible.builtin.stat:
+    path: "{{ wp_root }}/wp-config.php"
+  register: wp_config
+
+- name: Create wp-config.php
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} config create
+      --path={{ wp_root }}
+      --dbname={{ wp_db_name }}
+      --dbuser={{ wp_db_user }}
+      --dbpass={{ wp_db_password }}
+      --dbhost={{ wp_db_host }}
+      --skip-check
+      --allow-root
+  when: not wp_config.stat.exists
+  no_log: true
+
+- name: Check whether WordPress is already installed
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} core is-installed
+      --path={{ wp_root }}
+      --allow-root
+  register: wp_installed
+  changed_when: false
+  failed_when: false
+
+- name: Install WordPress
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} core install
+      --path={{ wp_root }}
+      --url={{ wp_site_url }}
+      --title={{ wp_site_title | quote }}
+      --admin_user={{ wp_admin_user }}
+      --admin_password={{ wp_admin_password | quote }}
+      --admin_email={{ wp_admin_email }}
+      --skip-email
+      --allow-root
+  when: wp_installed.rc != 0
+  no_log: true
+
+- name: Check installed WordPress plugins
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} plugin is-installed {{ item }}
+      --path={{ wp_root }}
+      --allow-root
+  loop: "{{ wp_plugins }}"
+  register: plugin_checks
+  changed_when: false
+  failed_when: false
+
+- name: Install missing WordPress plugins
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} plugin install {{ item.item }}
+      --path={{ wp_root }}
+      --allow-root
+  loop: "{{ plugin_checks.results }}"
+  when: item.rc != 0
+
+- name: Check whether requested plugins are active
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} plugin is-active {{ item }}
+      --path={{ wp_root }}
+      --allow-root
+  loop: "{{ wp_plugins }}"
+  register: plugin_active_checks
+  changed_when: false
+  failed_when: false
+
+- name: Activate inactive WordPress plugins
+  ansible.builtin.command:
+    cmd: >-
+      {{ wp_cli_path }} plugin activate {{ item.item }}
+      --path={{ wp_root }}
+      --allow-root
+  loop: "{{ plugin_active_checks.results }}"
+  when: item.rc != 0
+
+- name: Set final WordPress ownership
+  ansible.builtin.file:
+    path: "{{ wp_root }}"
+    owner: "{{ wp_system_user }}"
+    group: "{{ wp_web_group }}"
+    recurse: true
+
+- name: Reapply SELinux context after WordPress deployment on Red Hat
+  ansible.builtin.command:
+    cmd: "restorecon -Rv {{ wp_root }}"
+  register: wordpress_restorecon
+  changed_when: "'Relabeled' in wordpress_restorecon.stdout"
+  when: ansible_os_family == 'RedHat'
+
+- name: Get current WordPress site title
+  ansible.builtin.command:
+    argv:
+      - "{{ wp_cli_path }}"
+      - eval
+      - 'echo html_entity_decode(get_option("blogname"));'
+      - "--path={{ wp_root }}"
+      - --allow-root
+  register: current_wp_title
+  changed_when: false
+
+- name: Update WordPress site title when needed
+  ansible.builtin.command:
+    argv:
+      - "{{ wp_cli_path }}"
+      - option
+      - update
+      - blogname
+      - "{{ wp_site_title }}"
+      - "--path={{ wp_root }}"
+      - --allow-root
+  when: (current_wp_title.stdout | trim) != (wp_site_title | trim)
+
+- name: Verify WordPress site title
+  ansible.builtin.command:
+    argv:
+      - "{{ wp_cli_path }}"
+      - eval
+      - 'echo html_entity_decode(get_option("blogname"));'
+      - "--path={{ wp_root }}"
+      - --allow-root
+  register: wp_title_check
+  changed_when: false
+
+
+- name: Show expected and actual WordPress titles
+  ansible.builtin.debug:
+    msg:
+      - "Expected: [{{ wp_site_title }}]"
+      - "Actual:   [{{ wp_title_check.stdout }}]"
+
+- name: Confirm expected WordPress site title
+  ansible.builtin.assert:
+    that:
+      - wp_title_check.stdout == wp_site_title
+    fail_msg: "WordPress title does not match the expected value."
+
+- name: Verify WordPress HTTPS page responds locally
+  ansible.builtin.uri:
+    url: https://127.0.0.1/
+    validate_certs: false
+    status_code: 200
+  register: wordpress_http_check
+  changed_when: false

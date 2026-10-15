@@ -1,0 +1,161 @@
+---
+# -----------------------------------------------------------------------------
+# Determine distribution-specific values from gathered facts
+# -----------------------------------------------------------------------------
+- name: Set Red Hat platform values
+  ansible.builtin.set_fact:
+    wp_web_user: nginx
+    wp_web_group: nginx
+    mysql_socket: /var/lib/mysql/mysql.sock
+    php_packages:
+      - php
+      - php-fpm
+      - php-mysqlnd
+      - php-cli
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-xml
+      - php-zip
+    python_mysql_package: python3-PyMySQL
+  when: ansible_os_family == 'RedHat'
+
+
+- name: Set Debian platform values
+  ansible.builtin.set_fact:
+    wp_web_user: www-data
+    wp_web_group: www-data
+    mysql_socket: /run/mysqld/mysqld.sock
+    php_packages:
+      - php
+      - php-fpm
+      - php-mysql
+      - php-cli
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-xml
+      - php-zip
+    python_mysql_package: python3-pymysql
+  when: ansible_os_family == 'Debian'
+
+# -----------------------------------------------------------------------------
+# Repository/package preparation
+# -----------------------------------------------------------------------------
+- name: Install EPEL repository on Red Hat systems
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Refresh APT cache on Debian systems
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+
+- name: Install common LEMP and WordPress dependencies
+  ansible.builtin.package:
+    name:
+      - nginx
+      - mariadb-server
+      - curl
+      - unzip
+      - openssl
+      - "{{ python_mysql_package }}"
+    state: present
+
+- name: Install PHP packages
+  ansible.builtin.package:
+    name: "{{ php_packages }}"
+    state: present
+
+- name: Install Red Hat firewall and SELinux management packages
+  ansible.builtin.dnf:
+    name:
+      - firewalld
+      - policycoreutils-python-utils
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+# -----------------------------------------------------------------------------
+# Discover PHP-FPM naming/path differences
+# -----------------------------------------------------------------------------
+- name: Detect installed PHP major and minor version on Debian
+  ansible.builtin.command:
+    cmd: php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;'
+  register: php_version_result
+  changed_when: false
+  when: ansible_os_family == 'Debian'
+
+- name: Set Debian PHP-FPM service and paths
+  ansible.builtin.set_fact:
+    php_version: "{{ php_version_result.stdout }}"
+    php_fpm_service: "php{{ php_version_result.stdout }}-fpm"
+    php_fpm_pool_config: "/etc/php/{{ php_version_result.stdout }}/fpm/pool.d/www.conf"
+    php_fpm_socket: "/run/php/php{{ php_version_result.stdout }}-fpm.sock"
+    php_cli_ini: "/etc/php/{{ php_version_result.stdout }}/cli/php.ini"
+    php_fpm_ini: "/etc/php/{{ php_version_result.stdout }}/fpm/php.ini"
+  when: ansible_os_family == 'Debian'
+
+- name: Set Red Hat PHP-FPM service and paths
+  ansible.builtin.set_fact:
+    php_fpm_service: php-fpm
+    php_fpm_pool_config: /etc/php-fpm.d/www.conf
+    php_fpm_socket: /run/php-fpm/www.sock
+    php_cli_ini: /etc/php.ini
+    php_fpm_ini: /etc/php.ini
+  when: ansible_os_family == 'RedHat'
+
+# -----------------------------------------------------------------------------
+# Services
+# -----------------------------------------------------------------------------
+- name: Ensure MariaDB is enabled and running
+  ansible.builtin.service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: Ensure NGINX is enabled and running
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Ensure PHP-FPM is enabled and running
+  ansible.builtin.service:
+    name: "{{ php_fpm_service }}"
+    state: started
+    enabled: true
+
+- name: Ensure firewalld is enabled and running on Red Hat
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+  when: ansible_os_family == 'RedHat'
+
+# -----------------------------------------------------------------------------
+# WP-CLI
+# -----------------------------------------------------------------------------
+- name: Check whether WP-CLI is already installed
+  ansible.builtin.stat:
+    path: "{{ wp_cli_path }}"
+  register: wp_cli_stat
+
+- name: Download WP-CLI
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /tmp/wp-cli.phar
+    mode: '0755'
+  when: not wp_cli_stat.stat.exists
+
+- name: Install WP-CLI
+  ansible.builtin.copy:
+    src: /tmp/wp-cli.phar
+    dest: "{{ wp_cli_path }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0755'
+  when: not wp_cli_stat.stat.exists
